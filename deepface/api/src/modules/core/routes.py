@@ -166,3 +166,66 @@ def analyze():
     logger.debug(demographies)
 
     return demographies
+
+
+@blueprint.route("/register", methods=["POST"])
+def register():
+    """
+    Register a face image with a label
+    
+    The image will be saved in a directory structure organized by labels
+    """
+    input_args = (request.is_json and request.get_json()) or (
+        request.form and request.form.to_dict()
+    )
+
+    # Verify that label is provided
+    label = input_args.get("label")
+    if not label:
+        return {"error": "'label' parameter is required"}, 400
+
+    try:
+        img = extract_image_from_request("img")
+    except Exception as err:
+        return {"exception": str(err)}, 400
+
+    result = service.register(
+        img_path=img,
+        label=label,
+        detector_backend=input_args.get("detector_backend", "opencv"),
+        enforce_detection=input_args.get("enforce_detection", True),
+        align=input_args.get("align", True),
+    )
+
+    logger.debug(result)
+
+    return result
+
+
+@blueprint.route("/find", methods=["POST"])
+def find():
+    """
+    Find a face in the registered database using an input image
+    """
+    input_args = (request.is_json and request.get_json()) or (
+        request.form and request.form.to_dict()
+    )
+
+    try:
+        img = extract_image_from_request("img")
+    except Exception as err:
+        return {"exception": str(err)}, 400
+
+    result = service.find_by_image(
+        img_path=img,
+        detector_backend=input_args.get("detector_backend", "opencv"),
+        enforce_detection=input_args.get("enforce_detection", True),
+        align=input_args.get("align", True),
+        model_name=input_args.get("model_name", "Facenet"),
+        distance_metric=input_args.get("distance_metric", "cosine"),
+        threshold=input_args.get("threshold", None),
+    )
+
+    logger.debug(result)
+
+    return result
