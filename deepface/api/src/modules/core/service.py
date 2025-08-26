@@ -215,10 +215,10 @@ def find_by_image(
                     
                     result["results"].append({
                         "matches": matches,
-                        "match_count": len(matches),
+                        "count": len(matches),
                     })
                 else:
-                    result["results"].append({"matches": [], "match_count": 0})
+                    result["results"].append({"matches": [], "count": 0})
         else:
             result["message"] = "No matches found"
             
