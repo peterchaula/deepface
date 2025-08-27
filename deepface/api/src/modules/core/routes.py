@@ -163,6 +163,7 @@ def analyze():
         anti_spoofing=input_args.get("anti_spoofing", False),
     )
 
+    print(demographies)
     logger.debug(demographies)
 
     return demographies

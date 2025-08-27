@@ -21,6 +21,8 @@ RUN apt-get update && apt-get install -y \
     libsm6 \
     libxext6 \
     libhdf5-dev \
+    build-essential \
+    cmake \
     && rm -rf /var/lib/apt/lists/*
 
 # -----------------------------------
@@ -29,6 +31,7 @@ COPY ./deepface /app/deepface
 # even though we will use local requirements, this one is required to perform install deepface from source code
 COPY ./requirements.txt /app/requirements.txt
 COPY ./requirements_local /app/requirements_local.txt
+COPY ./requirements_additional.txt /app/requirements_additional.txt
 COPY ./package_info.json /app/
 COPY ./setup.py /app/
 COPY ./README.md /app/
@@ -46,14 +49,15 @@ COPY ./entrypoint.sh /app/deepface/api/src/entrypoint.sh
 # -----------------------------------
 # install dependencies - deepface with these dependency versions is working
 RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host=files.pythonhosted.org -r /app/requirements_local.txt
+RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host=files.pythonhosted.org -r /app/requirements_additional.txt
 # install deepface from source code (always up-to-date)
-RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host=files.pythonhosted.org -e .
 
 # -----------------------------------
 # some packages are optional in deepface. activate if your task depends on one.
 # RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host=files.pythonhosted.org cmake==3.24.1.1
 # RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host=files.pythonhosted.org dlib==19.20.0
 # RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host=files.pythonhosted.org lightgbm==2.3.1
+RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host=files.pythonhosted.org -e .
 
 # -----------------------------------
 # environment variables
