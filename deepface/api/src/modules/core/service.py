@@ -231,3 +231,26 @@ def find_by_image(
         return {"error": f"Exception during face recognition: {str(err)} - {tb_str}"}, 400
 
 
+def remove_by_label(
+    label: str,
+):
+    try:
+        label_directory = os.path.join(REGISTERED_FACES_DIR, label)
+
+        if os.path.exists(label_directory):
+            shutil.rmtree(label_directory)
+
+        result = {
+            "success": True,
+            "message": f"Successfully removed all faces for label '{label}'"
+        }
+        
+        return result
+        
+    except Exception as err:
+        tb_str = traceback.format_exc()
+        logger.error(str(err))
+        logger.error(tb_str)
+        return {"error": f"Exception during face removal: {str(err)} - {tb_str}"}, 400
+
+

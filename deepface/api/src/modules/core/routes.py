@@ -230,3 +230,24 @@ def find():
     logger.debug(result)
 
     return result
+
+
+@blueprint.route("/remove", methods=["POST", "DELETE"])
+def remove():
+    """
+    Remove all face images for a given label
+    """
+    input_args = (request.is_json and request.get_json()) or (
+        request.form and request.form.to_dict()
+    )
+
+    # Verify that label is provided
+    label = input_args.get("label")
+    if not label:
+        return {"error": "'label' parameter is required"}, 400
+
+    result = service.remove_by_label(label=label)
+
+    logger.debug(result)
+
+    return result
