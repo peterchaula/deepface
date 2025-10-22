@@ -7,6 +7,7 @@ from typing import Optional, Union
 # 3rd party dependencies
 import numpy as np
 from PIL import Image
+import uuid
 
 # project dependencies
 from deepface import DeepFace
@@ -142,17 +143,16 @@ def register(
                 if ext:
                     extension = ext
             
-            filename = f"{int(time.time())}{extension}"
+            filename = f"{uuid.uuid4()}{extension}"
             file_path = os.path.join(label_directory, filename)
             
             if isinstance(img_path, str):
                 if os.path.isfile(img_path):
                     shutil.copy(img_path, file_path)
                 else:
-                    pil_image = Image.fromarray((face_img * 255).astype(np.uint8))
-                    pil_image.save(file_path)
+                    raise ValueError("Image path is not a file")
             else:
-                pil_image = Image.fromarray((face_img * 255).astype(np.uint8))
+                pil_image = Image.fromarray(img_path)
                 pil_image.save(file_path)
             
             result["success"] = True
