@@ -8,6 +8,7 @@ from typing import Optional, Union
 import numpy as np
 from PIL import Image
 import uuid
+import cv2
 
 # project dependencies
 from deepface import DeepFace
@@ -152,8 +153,7 @@ def register(
                 else:
                     raise ValueError("Image path is not a file")
             else:
-                pil_image = Image.fromarray(img_path)
-                pil_image.save(file_path)
+                cv2.imwrite(file_path, img_path)
             
             result["success"] = True
             result["label"] = label
